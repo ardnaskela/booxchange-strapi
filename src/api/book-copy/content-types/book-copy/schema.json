@@ -1,0 +1,50 @@
+{
+  "kind": "collectionType",
+  "collectionName": "book_copies",
+  "info": {
+    "singularName": "book-copy",
+    "pluralName": "book-copies",
+    "displayName": "BookCopy",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "book": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::book.book",
+      "inversedBy": "book_copies"
+    },
+    "seller": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "books_sold"
+    },
+    "state": {
+      "type": "enumeration",
+      "enum": [
+        "pessimo",
+        "discreto",
+        "buono",
+        "ottimo",
+        "come nuovo"
+      ],
+      "required": false
+    },
+    "price": {
+      "type": "decimal",
+      "min": 0,
+      "required": true
+    },
+    "buyer": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "books_bought"
+    }
+  }
+}

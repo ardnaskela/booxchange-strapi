@@ -368,6 +368,7 @@ export interface ApiBookBook extends Schema.CollectionType {
     singularName: 'book';
     pluralName: 'books';
     displayName: 'Book';
+    description: '';
   };
   options: {
     draftAndPublish: false;
@@ -378,12 +379,125 @@ export interface ApiBookBook extends Schema.CollectionType {
     author: Attribute.String;
     year_published: Attribute.Integer;
     edition: Attribute.String;
-    state: Attribute.Enumeration<['come nuovo', 'buono', 'decente', 'scarso']>;
+    book_copies: Attribute.Relation<
+      'api::book.book',
+      'oneToMany',
+      'api::book-copy.book-copy'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<'api::book.book', 'oneToOne', 'admin::user'> &
       Attribute.Private;
     updatedBy: Attribute.Relation<'api::book.book', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+  };
+}
+
+export interface ApiBookCopyBookCopy extends Schema.CollectionType {
+  collectionName: 'book_copies';
+  info: {
+    singularName: 'book-copy';
+    pluralName: 'book-copies';
+    displayName: 'BookCopy';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    book: Attribute.Relation<
+      'api::book-copy.book-copy',
+      'manyToOne',
+      'api::book.book'
+    >;
+    seller: Attribute.Relation<
+      'api::book-copy.book-copy',
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    state: Attribute.Enumeration<
+      ['pessimo', 'discreto', 'buono', 'ottimo', 'come nuovo']
+    >;
+    price: Attribute.Decimal &
+      Attribute.Required &
+      Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      >;
+    buyer: Attribute.Relation<
+      'api::book-copy.book-copy',
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::book-copy.book-copy',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::book-copy.book-copy',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiReviewReview extends Schema.CollectionType {
+  collectionName: 'reviews';
+  info: {
+    singularName: 'review';
+    pluralName: 'reviews';
+    displayName: 'Review';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    description: Attribute.RichText;
+    rating: Attribute.Integer &
+      Attribute.Required &
+      Attribute.SetMinMax<
+        {
+          min: 1;
+          max: 5;
+        },
+        number
+      >;
+    buyer: Attribute.Relation<
+      'api::review.review',
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    seller: Attribute.Relation<
+      'api::review.review',
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    book_copy: Attribute.Relation<
+      'api::review.review',
+      'oneToOne',
+      'api::book-copy.book-copy'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::review.review',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::review.review',
+      'oneToOne',
+      'admin::user'
+    > &
       Attribute.Private;
   };
 }
@@ -796,10 +910,25 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
       'manyToOne',
       'plugin::users-permissions.role'
     >;
-    books: Attribute.Relation<
+    books_bought: Attribute.Relation<
       'plugin::users-permissions.user',
       'oneToMany',
-      'api::book.book'
+      'api::book-copy.book-copy'
+    >;
+    books_sold: Attribute.Relation<
+      'plugin::users-permissions.user',
+      'oneToMany',
+      'api::book-copy.book-copy'
+    >;
+    buyer_reviews: Attribute.Relation<
+      'plugin::users-permissions.user',
+      'oneToMany',
+      'api::review.review'
+    >;
+    seller_reviews: Attribute.Relation<
+      'plugin::users-permissions.user',
+      'oneToMany',
+      'api::review.review'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
@@ -829,6 +958,8 @@ declare module '@strapi/types' {
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'api::book.book': ApiBookBook;
+      'api::book-copy.book-copy': ApiBookCopyBookCopy;
+      'api::review.review': ApiReviewReview;
       'plugin::upload.file': PluginUploadFile;
       'plugin::upload.folder': PluginUploadFolder;
       'plugin::content-releases.release': PluginContentReleasesRelease;

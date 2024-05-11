@@ -4,7 +4,8 @@
   "info": {
     "singularName": "book",
     "pluralName": "books",
-    "displayName": "Book"
+    "displayName": "Book",
+    "description": ""
   },
   "options": {
     "draftAndPublish": false
@@ -26,14 +27,11 @@
     "edition": {
       "type": "string"
     },
-    "state": {
-      "type": "enumeration",
-      "enum": [
-        "come nuovo",
-        "buono",
-        "decente",
-        "scarso"
-      ]
+    "book_copies": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::book-copy.book-copy",
+      "mappedBy": "book"
     }
   }
 }

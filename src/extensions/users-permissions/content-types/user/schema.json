@@ -65,10 +65,29 @@
       "inversedBy": "users",
       "configurable": false
     },
-    "books": {
+    "books_bought": {
       "type": "relation",
       "relation": "oneToMany",
-      "target": "api::book.book"
+      "target": "api::book-copy.book-copy",
+      "mappedBy": "buyer"
+    },
+    "books_sold": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::book-copy.book-copy",
+      "mappedBy": "seller"
+    },
+    "buyer_reviews": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::review.review",
+      "mappedBy": "buyer"
+    },
+    "seller_reviews": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::review.review",
+      "mappedBy": "seller"
     }
   }
 }
